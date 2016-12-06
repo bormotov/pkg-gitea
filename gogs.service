@@ -1,0 +1,18 @@
+[Unit]
+Description=Gogs (Go Git Service)
+After=syslog.target
+After=network.target
+
+[Service]
+LimitMEMLOCK=infinity
+LimitNOFILE=65535
+Type=simple
+User=git
+Group=git
+EnvironmentFile=-/etc/sysconfig/gogs
+WorkingDirectory=/var/lib/gogs
+ExecStart=/usr/bin/gogs web
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
