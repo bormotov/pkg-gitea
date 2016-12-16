@@ -1,5 +1,5 @@
 [Unit]
-Description=Gogs (Go Git Service)
+Description=Gitea (Go Git Service)
 After=syslog.target
 After=network.target
 
@@ -9,9 +9,9 @@ LimitNOFILE=65535
 Type=simple
 User=git
 Group=git
-EnvironmentFile=-/etc/sysconfig/gogs
-WorkingDirectory=/var/lib/gogs
-ExecStart=/usr/bin/gogs web
+EnvironmentFile=-/etc/sysconfig/gitea
+WorkingDirectory=/var/lib/gitea
+ExecStart=/usr/bin/gitea web $GITEA_ARGS
 Restart=always
 
 [Install]
