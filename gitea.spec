@@ -13,13 +13,13 @@
 %global repo            gitea
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          f0a989c1d0843ab47a48be5219470a93a462e302
+%global commit          e698654902a101e616880a4a6aa0a6f9ca2b2ce7
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 Name:		gitea
-Version:	0.9.97
-Release:	3%{?dist}
-Summary:	Gogs (Go Git Service) is a painless self-hosted Git service
+Version:	1.0.1
+Release:	1%{?dist}
+Summary:	Gitea: Git with a cup of tea
 License:	MIT
 URL:		https://%{provider_prefix}
 Source0:	https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
@@ -63,9 +63,14 @@ mkdir -p %{buildroot}%{_bindir}/
 install -D -p -m 0755 _gopath/bin/gitea %{buildroot}%{_bindir}/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+touch %{buildroot}/%{_sysconfdir}/%{name}/%{name}.ini
 install -D -p -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/%{name}
+
+%pre
+getent group git >/dev/null || groupadd -r git
+getent passwd git >/dev/null || useradd -r -g git -d %{_sharedstatedir}/%{name} -s /sbin/nologin -c "git user" git
 
 %post
 %systemd_post %{name}.service
@@ -85,7 +90,7 @@ install -d -m 0755 %{buildroot}%{_sharedstatedir}/%{name}
 %{_bindir}/%{name}
 %dir %attr(-,git,git) %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
-#%config(noreplace) %attr(-,git,git)  %{_sysconfdir}/%{name}/%{name}.conf
+%config(noreplace) %attr(-,git,git)  %{_sysconfdir}/%{name}/%{name}.ini
 %dir %attr(-,git,git) %{_sharedstatedir}/%{name}
 %{_unitdir}/%{name}.service
 
