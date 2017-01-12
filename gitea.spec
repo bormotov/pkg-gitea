@@ -18,13 +18,14 @@
 
 Name:		gitea
 Version:	1.0.1
-Release:	1%{?dist}
+Release:	8%{?dist}
 Summary:	Gitea: Git with a cup of tea
 License:	MIT
 URL:		https://%{provider_prefix}
 Source0:	https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source1:	%{name}.service
 Source2:	%{name}.conf
+Source3:        %{name}.ini
 
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64 ppc64le
 BuildRequires:  golang
@@ -54,19 +55,24 @@ export GO15VENDOREXPERIMENT=1
 mkdir -p $GOPATH/src/code.gitea.io/
 ln -s ../../../ _gopath/src/code.gitea.io/gitea
 pushd $GOPATH/src/code.gitea.io/gitea
+export TAGS="sqlite bindata"
 make generate
+make build
 popd
-go get -v -tags "sqlite bindata" code.gitea.io/gitea
 
 %install
 mkdir -p %{buildroot}%{_bindir}/
-install -D -p -m 0755 _gopath/bin/gitea %{buildroot}%{_bindir}/
+install -D -p -m 0755 _gopath/src/code.gitea.io/gitea/gitea %{buildroot}%{_bindir}/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
-touch %{buildroot}/%{_sysconfdir}/%{name}/%{name}.ini
+install -D -p -m 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/%{name}/%{name}.ini
 install -D -p -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 install -D -p -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/%{name}.service
 install -d -m 0755 %{buildroot}%{_sharedstatedir}/%{name}
+mkdir -p %{buildroot}/%{_tmpfilesdir}
+cat > %{buildroot}/%{_tmpfilesdir}/%{name}.conf <<EOF
+d /run/gitea 0775 git git -
+EOF
 
 %pre
 getent group git >/dev/null || groupadd -r git
@@ -93,6 +99,7 @@ getent passwd git >/dev/null || useradd -r -g git -d %{_sharedstatedir}/%{name} 
 %config(noreplace) %attr(-,git,git)  %{_sysconfdir}/%{name}/%{name}.ini
 %dir %attr(-,git,git) %{_sharedstatedir}/%{name}
 %{_unitdir}/%{name}.service
+%{_tmpfilesdir}/%{name}.conf
 
 %changelog
 * Sun May 15 2016 jchaloup <jchaloup@redhat.com> - 3.0.0-0.1.beta0
