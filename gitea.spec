@@ -17,7 +17,7 @@
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 Name:		gitea
-Version:	1.0.1
+Version:	1.2
 Release:	8%{?dist}
 Summary:	Gitea: Git with a cup of tea
 License:	MIT
