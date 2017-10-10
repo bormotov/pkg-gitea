@@ -13,11 +13,11 @@
 %global repo            gitea
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          e698654902a101e616880a4a6aa0a6f9ca2b2ce7
+%global commit          03ff7687e02b86b956fffc74fb2ab66430cd96d1
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 Name:		gitea
-Version:	1.2
+Version:	v1.2.0-rc3
 Release:	8%{?dist}
 Summary:	Gitea: Git with a cup of tea
 License:	MIT
