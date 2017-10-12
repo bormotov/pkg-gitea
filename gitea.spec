@@ -35,6 +35,7 @@ BuildRequires:  pam-devel
 BuildRequires:	systemd
 BuildRequires:  git
 
+Requires:	git
 Requires(pre):	shadow-utils
 Requires(post): systemd
 Requires(preun): systemd
