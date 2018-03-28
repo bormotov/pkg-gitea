@@ -13,12 +13,12 @@
 %global repo            gitea
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          ed07d8a3081759ab078ece41340d4a84d30f83fd
+%global commit          832e2ebe912b10a24fafe4b0d33b4f3e89f6375e
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 Name:		gitea
-Version:	1.2.0
-Release:	8%{?dist}
+Version:	1.4.0
+Release:	1%{?dist}
 Summary:	Gitea: Git with a cup of tea
 License:	MIT
 URL:		https://%{provider_prefix}
@@ -30,7 +30,7 @@ Source3:        %{name}.ini
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64 ppc64le
 BuildRequires:  golang
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildRequires:  sqlite-devel
+BuildRequires:  postgresql-devel
 BuildRequires:  pam-devel
 BuildRequires:	systemd
 BuildRequires:  git
@@ -56,7 +56,7 @@ export GO15VENDOREXPERIMENT=1
 mkdir -p $GOPATH/src/code.gitea.io/
 ln -s ../../../ _gopath/src/code.gitea.io/gitea
 pushd $GOPATH/src/code.gitea.io/gitea
-export TAGS="sqlite bindata"
+export TAGS="postgres bindata"
 make generate
 make build
 popd
@@ -103,6 +103,6 @@ getent passwd git >/dev/null || useradd -r -g git -d %{_sharedstatedir}/%{name} 
 %{_tmpfilesdir}/%{name}.conf
 
 %changelog
-* Sun May 15 2016 jchaloup <jchaloup@redhat.com> - 3.0.0-0.1.beta0
-- Update to v3.0.0-beta0 (build from bundled until new deps appear in dist-git)
-  resolves: #1333988
+* Wed Mar 28 2018 bormotov <bormotov@gmail.com.com> - 1.4.0-1
+- up to gitea 1.4.0
+
